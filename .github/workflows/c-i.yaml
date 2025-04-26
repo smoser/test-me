@@ -1,0 +1,33 @@
+# Copyright 2025 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+name: "c-i for test-me"
+
+on:
+  pull_request_target:
+    branches:
+      - "main"
+  push:
+
+permissions: {}
+
+jobs:
+  qemu-check:
+
+    runs-on: ubuntu
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - uses: './.github/actions/apt-faster'
+
+      - name: "Publish AWS Images"
+        run: |
+          date -R
+          uptime
+          cat <<EOF
+          ==== Here I am it went OK ====
+          EOF
