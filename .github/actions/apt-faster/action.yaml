@@ -36,6 +36,10 @@ runs:
 
         sudo chmod 755 /usr/bin/apt-get.wrap
 
+        command -v eatmydata >/dev/null &&
+          echo "eatmydata was present" ||
+          echo "eatmydata not installed"
+
     - name: replace apt-get
       shell: bash
       run: |
@@ -74,7 +78,7 @@ runs:
       shell: bash
       run: |
         set +x
-        find /etc/apt/sources* -type f  | while read line; do
+        find /etc/apt/sources* -type f  | while read f ; do
            echo === $f ===
            cat $f
         done
