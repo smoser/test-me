@@ -74,10 +74,31 @@ runs:
            sudo rm -f "$f"
         fi
 
-    - name: debug - show me /etc/apt/sources
+    - name: disable man-db update
       shell: bash
       run: |
-        set +x
+        echo "set man-db/auto-update false" | sudo debconf-communicate
+        sudo dpkg-reconfigure --frontend=noninteractive man-db
+
+    - name: do not install docs
+      shell: bash
+      run: |
+        sudo tee /etc/dpkg/dpkg.cfg.d/01_nodoc > /dev/null <<"EOF"
+        path-exclude /usr/share/doc/*
+        path-exclude /usr/share/man/*
+        path-exclude /usr/share/info/*
+        EOF
+
+    - name: apt-get default to force-unsafe-io
+      shell: bash
+      run: |
+        sudo tee /etc/apt/apt.conf.d/99dpkg-force-unsafe-io >/dev/null <<"EOF"
+        Dpkg::Options:: --force-unsafe-io;
+        EOF
+
+    - name: show apt sources
+      shell: bash
+      run: |
         find /etc/apt/sources* -type f  | while read f ; do
            echo === $f ===
            cat $f
