@@ -48,7 +48,7 @@ runs:
 
         sudo mv /usr/bin/apt-get.wrap /usr/bin/apt-get
 
-    - name: disable translations
+    - name: update - disable translations
       shell: bash
       run: |
         f="/etc/apt/apt.conf.d/99notranslations"
@@ -57,7 +57,7 @@ runs:
            sudo rm -f /var/lib/apt/lists/*Translation*
         fi
 
-    - name: disable appstream
+    - name: update - disable appstream
       shell: bash
       run: |
         # https://askubuntu.com/questions/823329/how-do-i-disable-fetching-of-dep-11-files
@@ -66,7 +66,7 @@ runs:
            sudo rm -f "$f"
         fi
 
-    - name: disable command not found
+    - name: update - disable command not found
       shell: bash
       run: |
         f="/etc/apt/apt.conf.d/50command-not-found"
@@ -74,13 +74,20 @@ runs:
            sudo rm -f "$f"
         fi
 
-    - name: disable man-db update
+    - name: install - disable recommends by default
+      shell: bash
+      run: |
+        sudo tee /etc/apt/apt.conf.d/99disable-recommends >/dev/null <<"EOF"
+        APT::Install-Recommends "false";
+        EOF
+
+    - name: install - disable man-db update
       shell: bash
       run: |
         echo "set man-db/auto-update false" | sudo debconf-communicate
         sudo dpkg-reconfigure --frontend=noninteractive man-db
 
-    - name: do not install docs
+    - name: install - do not install docs
       shell: bash
       run: |
         sudo tee /etc/dpkg/dpkg.cfg.d/01_nodoc > /dev/null <<"EOF"
@@ -89,7 +96,7 @@ runs:
         path-exclude /usr/share/info/*
         EOF
 
-    - name: apt-get default to force-unsafe-io
+    - name: install - apt-get default to force-unsafe-io
       shell: bash
       run: |
         sudo tee /etc/apt/apt.conf.d/99dpkg-force-unsafe-io >/dev/null <<"EOF"
