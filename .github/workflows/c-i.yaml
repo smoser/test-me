@@ -30,7 +30,7 @@ jobs:
           sudo apt-get --quiet --assume-yes \
             --option=Dpkg::Options::=--force-confold \
             --option=Dpkg::options::=--force-unsafe-io \
-            install --no-install-recommends \
+            install \
             cpu-checker python3-venv qemu-system qemu-utils
 
       - name: "Do some things"
