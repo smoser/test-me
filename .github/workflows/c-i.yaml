@@ -19,6 +19,18 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
+      - uses: "./.github/actions/apt-faster"
+
+      - name: "has parallel ?"
+        run: |
+          command -v parallel && echo "Hooray, parallel" ||
+             { echo "BAD: no parallel"; exit 1; }
+
+      - name: "use parallel"
+        run: |
+          ( for i in $(seq 1 8); do echo $i; done ) |
+              parallel -j4 'echo $$ {}; sleep .$RANDOM'
+
       - name: "apt-update"
         run: |
           sudo apt-get --quiet update
